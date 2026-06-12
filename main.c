@@ -1,11 +1,13 @@
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 //-----------------------------------print_words.c
-//int print_char(char c) {	
-//	write(1, &c, 1);
-//	return 1;
-//}
+int print_char(void *p) {
+	char c = (char)(long)p;	
+	write(1, &c, 1);
+	return 1;
+}
 
 int print_string(char *str) {
 	size_t	i;
@@ -64,11 +66,9 @@ static int print_num(long n) {
 	return (out);
 }
 
-int print_uint(unsigned int n)
-{
+int print_uint(unsigned int n) {
 	return print_num((long)n);
 }
-
 
 int print_dec(int n) {
 	int 	out;
@@ -87,13 +87,68 @@ int print_dec(int n) {
 //-----------------------------------------------------
 //-----------------------------------------------------
 //-----------------------------------------------------
+
+typedef int (*f)(void *);
+typedef struct Couple {
+	char key;
+	f func;
+	struct Couple *next;
+} Couple;
+
+
+Couple *add_couple(Couple *head, char key, f func)
+{
+	Couple *node = malloc(sizeof(Couple));
+	if (!node) return head;
+
+	node->key = key;
+	node->func = func;
+	node->next = head;
+	return node;
+}
+
+Couple *find_couple(Couple *head, char key)
+{
+    while (head) {
+        if (head->key == key)
+            return head;
+
+        head = head->next;
+    }
+    return 0;
+}
+
+
+void free_list(Couple *head)
+{
+    while (head) {
+        Couple *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+
 int main() {
+	Couple *couples;
+	Couple *found_couple; 
+	
+	couples = 0;
+	couples = add_couple(couples, 'c', print_char);
+	//couples = add_couple(couples, 's', print_string);
+	//couples = add_couple(couples, 'd', print_dec);
+	found_couple = find_couple(couples, 's');
+	if (found_couple)
+		found_couple -> func((void *)(long)42);
+	free_list(couples);
+}
+/*
 	int negn = -10;
 	int posn = 30;
 	char *str = "ciao!";
 	char *ptr = "ptr!";
 
-	printf("d---------------------------------");
+	oprintf("d---------------------------------");
 	printf("original: \n");
 	printf(" returns %d\n", printf("%d", negn));
 	printf("mine: \n");
@@ -151,3 +206,4 @@ int main() {
 	printf("mine: \n");
 	printf(" returns %d\n\n", print_hex(255, 1));
 }
+*/
