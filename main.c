@@ -1,3 +1,4 @@
+#include "ft_printf.h"
 int parse_and_print(va_list var, char c)
 {
 	if (c == '%')
@@ -16,6 +17,8 @@ int parse_and_print(va_list var, char c)
 		return print_hex(va_arg(var, unsigned int), 0);
 	if (c == 'X')
 		return print_hex(va_arg(var, unsigned int), 1);
+		
+	return 0;
 }
 
 int ft_printf(const char *str, ...)
@@ -48,7 +51,7 @@ int ft_printf(const char *str, ...)
 
 int main()
 {
-	ft_print("la stringa dice %s", "ciao");
+	ft_printf("la stringa dice %s", "ciao");
 }
 
 

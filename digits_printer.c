@@ -1,3 +1,5 @@
+#include "ft_printf.h"
+
 static int print_num(long n) {
 	int  out;
 	char c;

@@ -1,3 +1,5 @@
+#include "ft_printf.h"
+
 static int	print_hex(unsigned long n, int upper)
 {
 	int				out;
