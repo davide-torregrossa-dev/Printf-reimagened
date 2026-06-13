@@ -1,4 +1,5 @@
 #include "ft_printf.h"
+int print_hex(unsigned long n, int upper);
 int parse_and_print(va_list var, char c)
 {
 	if (c == '%')
