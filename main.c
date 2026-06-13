@@ -1,154 +1,68 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-//-----------------------------------print_words.c
-int print_char(void *p) {
-	char c = (char)(long)p;	
-	write(1, &c, 1);
-	return 1;
+int parse_and_print(va_list var, char c)
+{
+	if (c == '%')
+		return print_char('%');
+	if (c == 'c')
+		return print_char(va_arg(var, int));
+	if (c == 's')
+		return print_string(va_arg(var, char *));
+	if (c == 'i' || c == 'd')
+		return print_dec(va_arg(var, int));
+	if (c == 'u')
+		return print_uint(va_arg(var, unsigned int));
+	if (c == 'p')
+		return print_ptr(va_arg(var, void *));
+	if (c == 'x')
+		return print_hex(va_arg(var, unsigned int), 0);
+	if (c == 'X')
+		return print_hex(va_arg(var, unsigned int), 1);
 }
 
-int print_string(char *str) {
-	size_t	i;
-	
+int ft_printf(const char *str, ...)
+{
+	int i;
+	int count;
+	va_list args;
+
+	count = 0;
 	i = 0;
-	while(str[i]) {
+	va_start(args, str);
+	while (str[i])
+	{
+		if (str[i] == '%' && str[i + 1])
+		{
+			count += parse_and_print(args, str[i+1]);
+			i+=2;
+		}
+		if (!str[i])
+			break;
+		if (str[i] == '%')
+			continue;
 		write(1, &str[i], 1);
+		count++;
 		i++;
 	}
-	return i;
+	va_end(args);
+	return count;
 }
 
-//------------------------------print_ptr.c
-static int	print_hex(unsigned long n, int upper)
+int main()
 {
-	int				out;
-	char			*ref;
-	char			c;
+	ft_print("la stringa dice %s", "ciao");
+}
+
+
+//int main() 
+//{
+//	ft_print(		
 	
-	out = 0;
-	if (upper)
-		ref = "0123456789ABCDEF";
-	else
-		ref = "0123456789abcdef";
-	if (n >= 16)
-		out += print_hex(n/16, upper);
-	c = ref[n % 16];
-	out += write(1, &c, 1);
-	return out;
-}
-
-int print_ptr(void *ptr) {
-	unsigned long	n;
-	int				out;
-
-	out = 0;
-	if (!ptr)
-		return (write(1, "(nil)", 5));
-	n = (unsigned long)ptr;
-	out += write(1, "0x", 2);
-	out += print_hex(n, 0);
-	return out;
-}
-
-
-//-------------------------------- n
-static int print_num(long n) {
-	int  out;
-	char c;
-
-	out = 0;
-	if (n > 9)
-		out += print_num(n / 10);
-	c = (n % 10) + '0';
-	out += write(1, &c, 1);
-	return (out);
-}
-
-int print_uint(unsigned int n) {
-	return print_num((long)n);
-}
-
-int print_dec(int n) {
-	int 	out;
-	long	current_n;
-
-	out = 0;
-	current_n = n;
-	if (current_n < 0)
-		out+=write(1, "-", 1);
-	current_n *= ((n >= 0)*2)-1;
-	out+= print_num(current_n);
-	return (out);
-}
-
-//-----------------------------------------------------
-//-----------------------------------------------------
-//-----------------------------------------------------
-//-----------------------------------------------------
-
-typedef int (*f)(void *);
-typedef struct Couple {
-	char key;
-	f func;
-	struct Couple *next;
-} Couple;
-
-
-Couple *add_couple(Couple *head, char key, f func)
-{
-	Couple *node = malloc(sizeof(Couple));
-	if (!node) return head;
-
-	node->key = key;
-	node->func = func;
-	node->next = head;
-	return node;
-}
-
-Couple *find_couple(Couple *head, char key)
-{
-    while (head) {
-        if (head->key == key)
-            return head;
-
-        head = head->next;
-    }
-    return 0;
-}
-
-
-void free_list(Couple *head)
-{
-    while (head) {
-        Couple *tmp = head;
-        head = head->next;
-        free(tmp);
-    }
-}
-
-
-int main() {
-	Couple *couples;
-	Couple *found_couple; 
-	
-	couples = 0;
-	couples = add_couple(couples, 'c', print_char);
-	//couples = add_couple(couples, 's', print_string);
-	//couples = add_couple(couples, 'd', print_dec);
-	found_couple = find_couple(couples, 's');
-	if (found_couple)
-		found_couple -> func((void *)(long)42);
-	free_list(couples);
-}
-/*
+	/*
 	int negn = -10;
 	int posn = 30;
 	char *str = "ciao!";
 	char *ptr = "ptr!";
 
-	oprintf("d---------------------------------");
+	printf("d---------------------------------");
 	printf("original: \n");
 	printf(" returns %d\n", printf("%d", negn));
 	printf("mine: \n");
@@ -169,7 +83,7 @@ int main() {
 	printf("original: \n");
 	printf(" returns %d\n", printf("%c", 'c'));
 	printf("mine: \n");
-	printf(" returns %d\n\n", print_string((char[]){'c', 0}));
+	printf(" returns %d\n\n", print_char('c'));
 	
 	printf("p---------------------------------");
 	printf("original: \n");
@@ -205,5 +119,5 @@ int main() {
 	printf(" returns %d\n", printf("%X", 255));
 	printf("mine: \n");
 	printf(" returns %d\n\n", print_hex(255, 1));
-}
-*/
+	*/
+//}
