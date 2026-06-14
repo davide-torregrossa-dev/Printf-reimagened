@@ -111,8 +111,7 @@ The `ft_printf` function employs a **linear sequential scanning algorithm** to p
 2. **Format specifier detection**: When a `%` character is encountered followed by a valid format specifier, the parser delegates to the appropriate printing function.
 3. **Direct output**: Non-format characters are written directly to standard output using the `write()` system call.
 
-**Justification**: This approach is optimal for this use case because:
-- Linear time complexity O(n) is achieved, where n is the string length
+**Justification**:
 - Single-pass processing minimizes memory overhead
 - Early detection of format specifiers allows for immediate delegation to specialized handlers
 - No need for complex state machines or lookahead mechanisms
@@ -127,11 +126,6 @@ va_start(args, str);
 // ... retrieve arguments with va_arg(args, type) ...
 va_end(args);
 ```
-
-**Justification**: The standard variadic approach is used because:
-- It is portable across different C implementations
-- It provides type-safe (at compile time) access to variadic arguments
-- It naturally aligns with the function's expected behavior matching standard `printf`
 
 ### Format Specifier Dispatching
 
@@ -237,16 +231,6 @@ The Makefile compiles each source file into an object file, then links them into
 - Allows for incremental compilation (only changed files recompile)
 - Produces a reusable library archive
 - Demonstrates professional build system practices
-
----
-
-## Testing
-
-The project includes a commented-out test suite in `ft_printf.c` that compares output from the custom implementation against the standard library's `printf`. To enable testing:
-
-1. Uncomment the `main()` function in `ft_printf.c`
-2. Rebuild with `make re`
-3. Run the executable to see side-by-side comparisons
 
 ---
 
