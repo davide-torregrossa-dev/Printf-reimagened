@@ -4,7 +4,7 @@
 
 ## Description
 
-**Printf-reimagened** is a custom implementation of the standard C library's `printf` function. This project replicates the core functionality of the standard output formatting function, allowing for formatted string printing with support for multiple data types and format specifiers.
+**ft_printf** is a custom implementation of the standard C library's `printf` function. This project replicates the core functionality of the standard output formatting function, allowing for formatted string printing with support for multiple data types and format specifiers.
 
 ### Goal
 
